@@ -13,7 +13,7 @@
 
 namespace ChangeFeedProcessorV2
 {
-    using Microsoft.Azure.Documents.ChangeFeedProcessor;
+    using Microsoft.Azure.Documents.ChangeFeedProcessor.FeedProcessing;
 
     /// <summary>
     /// Factory class to create instance of document feed observer. 
@@ -35,7 +35,7 @@ namespace ChangeFeedProcessorV2
         public IChangeFeedObserver CreateObserver()
         {
             DocumentFeedObserver newObserver = new DocumentFeedObserver();
-            return newObserver;
+            return newObserver as IChangeFeedObserver;
         }
     }
 }

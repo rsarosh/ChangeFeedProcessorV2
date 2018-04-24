@@ -1,3 +1,10 @@
 obj/*
 packages/*
 bin/*
+App_Packages/LibLog.4.2/LibLog.cs
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vs/ChangeFeedProcessorV2/v15/sqlite3/storage.ide-wal
+.vs/ChangeFeedProcessorV2/v15/sqlite3/storage.ide-shm
+.vs/ChangeFeedProcessorV2/v15/Server/sqlite3/storage.ide-wal
+.vs/ChangeFeedProcessorV2/v15/Server/sqlite3/storage.ide-shm

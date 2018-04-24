@@ -18,7 +18,7 @@ namespace ChangeFeedProcessorV2
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Documents;
-    using Microsoft.Azure.Documents.ChangeFeedProcessor;
+    using Microsoft.Azure.Documents.ChangeFeedProcessor.FeedProcessing;
     using Microsoft.Azure.Documents.Client;
 
     /// <summary>
@@ -28,7 +28,7 @@ namespace ChangeFeedProcessorV2
     /// </summary>
     public class DocumentFeedObserver : IChangeFeedObserver
     {
-        private static int totalDocs = 0;
+    private static int totalDocs = 0;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentFeedObserver" /> class.
@@ -47,7 +47,7 @@ namespace ChangeFeedProcessorV2
         /// </summary>
         /// <param name="context">The context specifying partition for this observer, etc.</param>
         /// <returns>A Task to allow asynchronous execution</returns>
-        public Task OpenAsync(ChangeFeedObserverContext context)
+        public Task OpenAsync(IChangeFeedObserverContext context)
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("Observer opened for partition Key Range: {0}", context.PartitionKeyRangeId);
@@ -61,7 +61,7 @@ namespace ChangeFeedProcessorV2
         /// <param name="context">The context specifying partition for this observer, etc.</param>
         /// <param name="reason">Specifies the reason the observer is closed.</param>
         /// <returns>A Task to allow asynchronous execution</returns>
-        public Task CloseAsync(ChangeFeedObserverContext context, ChangeFeedObserverCloseReason reason)
+        public Task CloseAsync(IChangeFeedObserverContext context, ChangeFeedObserverCloseReason reason)
         {
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("Observer closed, {0}", context.PartitionKeyRangeId);
@@ -69,14 +69,8 @@ namespace ChangeFeedProcessorV2
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// When document changes are available on change feed, changes are copied to destination connection; 
-        /// this function prints out the changed document ID. 
-        /// </summary>
-        /// <param name="context">The context specifying partition for this observer, etc.</param>
-        /// <param name="docs">The documents changed.</param>
-        /// <returns>A Task to allow asynchronous execution</returns>
-        public Task ProcessChangesAsync(ChangeFeedObserverContext context, IReadOnlyList<Document> docs)
+
+        public Task ProcessChangesAsync(IChangeFeedObserverContext context, IReadOnlyList<Document> docs, CancellationToken cancellationToken)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Change feed: PartitionId {0} total {1} doc(s)", context.PartitionKeyRangeId, Interlocked.Add(ref totalDocs, docs.Count));

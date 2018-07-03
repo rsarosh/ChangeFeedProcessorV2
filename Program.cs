@@ -2,14 +2,23 @@
 namespace ChangeFeedProcessorV2
 {
     using System;
+    using System.Collections.Generic;
     using System.Configuration;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Azure.Documents;
     using Microsoft.Azure.Documents.ChangeFeedProcessor;
     using Microsoft.Azure.Documents.ChangeFeedProcessor.Logging;
+    using Microsoft.Azure.Documents.ChangeFeedProcessor.PartitionManagement;
     using Microsoft.Azure.Documents.Client;
 
+    public class LoadBalancingStrategy : IParitionLoadBalancingStrategy
+    {
+        public IEnumerable<ILease> SelectLeasesToTake(IEnumerable<ILease> allLeases)
+        {
+            return allLeases;
+        }
+    }
 
 
     /// ------------------------------------------------------------------------------------------------
@@ -33,7 +42,7 @@ namespace ChangeFeedProcessorV2
         private int leaseThroughput = int.Parse(ConfigurationManager.AppSettings["leaseThroughput"]);
 
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-        private readonly ChangeFeedProcessorBuilder builder = new ChangeFeedProcessorBuilder();
+   
         
 
         /// <summary>
@@ -83,7 +92,7 @@ namespace ChangeFeedProcessorV2
                 this.leaseDbName,
                 this.leaseCollectionName,
                 this.leaseThroughput);
-           
+
             await this.RunChangeFeedHostAsync();
 
         }
@@ -124,23 +133,24 @@ namespace ChangeFeedProcessorV2
             */
 
             feedOptions.StartFromBeginning = true;
-        
+           // feedOptions.RequestContinuation = "943518";  //this continuation token is ignored if there is lease
             ChangeFeedProcessorOptions feedProcessorOptions = new ChangeFeedProcessorOptions();
-
+            
             // ie. customizing lease renewal interval to 15 seconds
             // can customize LeaseRenewInterval, LeaseAcquireInterval, LeaseExpirationInterval, FeedPollDelay 
             feedProcessorOptions.LeaseRenewInterval = TimeSpan.FromSeconds(15);
-            
-            this.builder
+            ChangeFeedProcessorBuilder builder = new ChangeFeedProcessorBuilder();
+            builder
                 .WithHostName(hostName)
                 .WithFeedCollection(documentCollectionInfo)
                 .WithLeaseCollection(leaseCollectionInfo)
                 .WithProcessorOptions (feedProcessorOptions)
+                .WithPartitionLoadBalancingStrategy (new LoadBalancingStrategy())
                 .WithObserverFactory(new DocumentFeedObserverFactory());
 
             //    .WithObserver<DocumentFeedObserver>();  or just pass a observer
 
-            var result =  await this.builder.BuildAsync();
+            var result =  await builder.BuildAsync();
             await result.StartAsync();
             Console.Read();
             await result.StopAsync();

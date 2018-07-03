@@ -54,8 +54,8 @@
     <StartupObject>ChangeFeedProcessorV2.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Azure.Documents.ChangeFeedProcessor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Azure.DocumentDB.ChangeFeedProcessor.2.0.0-beta\lib\net451\Microsoft.Azure.Documents.ChangeFeedProcessor.dll</HintPath>
+    <Reference Include="Microsoft.Azure.Documents.ChangeFeedProcessor, Version=2.0.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.Azure.DocumentDB.ChangeFeedProcessor.2.0.4\lib\net45\Microsoft.Azure.Documents.ChangeFeedProcessor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Documents.Client, Version=1.21.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Azure.DocumentDB.1.21.1\lib\net45\Microsoft.Azure.Documents.Client.dll</HintPath>
@@ -68,7 +68,6 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
     <Compile Include="DocumentFeedObserver.cs" />
     <Compile Include="DocumentFeedObserverFactory.cs" />
     <Compile Include="Program.cs" />

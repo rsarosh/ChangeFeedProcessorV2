@@ -40,11 +40,8 @@ namespace ChangeFeedProcessorV2
         private string leaseDbName = ConfigurationManager.AppSettings["leaseDbName"];
         private string leaseCollectionName = ConfigurationManager.AppSettings["leaseCollectionName"];
         private int leaseThroughput = int.Parse(ConfigurationManager.AppSettings["leaseThroughput"]);
-
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
    
-        
-
         /// <summary>
         ///  Main program function; called when program runs
         /// </summary>
@@ -116,7 +113,6 @@ namespace ChangeFeedProcessorV2
                 DatabaseName = this.monitoredDbName,
                 CollectionName = this.monitoredCollectionName
             };
-
             
             DocumentCollectionInfo leaseCollectionInfo = new DocumentCollectionInfo
                 {
@@ -126,16 +122,9 @@ namespace ChangeFeedProcessorV2
                     CollectionName = this.leaseCollectionName
                 };
             DocumentFeedObserverFactory docObserverFactory = new DocumentFeedObserverFactory();
-            ChangeFeedOptions feedOptions = new ChangeFeedOptions();
-
-            /* ie customize StartFromBeginning so change feed reads from beginning
-                can customize MaxItemCount, PartitonKeyRangeId, RequestContinuation, SessionToken and StartFromBeginning
-            */
-
-            feedOptions.StartFromBeginning = true;
-           // feedOptions.RequestContinuation = "943518";  //this continuation token is ignored if there is lease
+          
             ChangeFeedProcessorOptions feedProcessorOptions = new ChangeFeedProcessorOptions();
-            
+            feedProcessorOptions.StartFromBeginning = true;
             // ie. customizing lease renewal interval to 15 seconds
             // can customize LeaseRenewInterval, LeaseAcquireInterval, LeaseExpirationInterval, FeedPollDelay 
             feedProcessorOptions.LeaseRenewInterval = TimeSpan.FromSeconds(15);
@@ -147,8 +136,6 @@ namespace ChangeFeedProcessorV2
                 .WithProcessorOptions (feedProcessorOptions)
                 .WithPartitionLoadBalancingStrategy (new LoadBalancingStrategy())
                 .WithObserverFactory(new DocumentFeedObserverFactory());
-
-            //    .WithObserver<DocumentFeedObserver>();  or just pass a observer
 
             var result =  await builder.BuildAsync();
             await result.StartAsync();
